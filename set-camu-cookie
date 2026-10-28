@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Set or rotate the MyCamu session cookie (connect.sid) on this server.
+#   ~/moodle-mcp/set-camu-cookie
+# The value is read hidden from your terminal, written only to .env (chmod 600),
+# verified against MyCamu, and the server is restarted. It is never echoed or logged.
+set -euo pipefail
+cd "$(dirname "$(readlink -f "$0")")"
+
+echo "Paste your MyCamu connect.sid value (input is hidden), then press Enter:"
+IFS= read -r -s RAW
+echo
+[[ -n "$RAW" ]] || { echo "Nothing pasted — no change made."; exit 1; }
+
+CAMU_RAW="$RAW" .venv/bin/python - <<'PY'
+import os, re
+from pathlib import Path
+v = os.environ["CAMU_RAW"].strip().strip('"').strip("'")
+v = re.sub(r"^\s*connect\.sid\s*=\s*", "", v)   # accept "connect.sid=..." too
+v = v.split(";")[0].strip()                       # drop any trailing cookie attributes
+if not v or any(c.isspace() for c in v):
+    raise SystemExit("That doesn't look like a connect.sid value — no change made.")
+env = Path(".env")
+lines = env.read_text().splitlines() if env.exists() else []
+lines = [l for l in lines if not l.startswith("MYCAMU_COOKIE=")] + [f"MYCAMU_COOKIE={v}"]
+tmp = env.with_suffix(".tmp")
+tmp.write_text("\n".join(lines) + "\n"); os.chmod(tmp, 0o600); tmp.replace(env)
+print(f"Saved ({len(v)} characters).")
+PY
+unset RAW
+rm -f mycamu_status.json
+
+echo "Checking with MyCamu…"
+if .venv/bin/python mycamu.py check; then
+  sudo systemctl restart moodle-mcp && echo "Server restarted — MyCamu tools are live."
+else
+  echo "MyCamu rejected that cookie. Log in to MyCamu again, copy a fresh connect.sid, and re-run."
+  exit 2
+fi
