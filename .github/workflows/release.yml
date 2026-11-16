@@ -1,0 +1,23 @@
+name: release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - run: npm ci && npm run build
+        working-directory: dashboard/web
+      - run: (cd dashboard/web/dist && zip -qr "$GITHUB_WORKSPACE/dashboard-dist.zip" .)
+      - run: gh release upload "${{ github.event.release.tag_name }}" dashboard-dist.zip --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
