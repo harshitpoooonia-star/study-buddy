@@ -1404,7 +1404,7 @@ async def camu_health(ctx: ContextTypes.DEFAULT_TYPE) -> None:
     if bad and not was:
         store.put("camu_bad", "1")
         await send(ctx.bot, OWNER_ID, "⚠️ <b>MyCamu session expired</b> — attendance and timetable won't load.\n"
-                                      "Log in to MyCamu in Chrome, then run <b>SET_CAMU_COOKIE.bat</b> on your PC.")
+                                      "Log in to MyCamu in Chrome, then run <b>~/moodle-mcp/set-camu-cookie</b> on the server.")
     elif not bad and was:
         store.put("camu_bad", "0")
         await send(ctx.bot, OWNER_ID, "✅ MyCamu is connected again.")
@@ -1448,7 +1448,7 @@ def main() -> None:
     if not OWNER_ID:
         sys.exit("OWNER_CHAT_ID missing in .env — run ~/moodle-mcp/set-bot-secrets")
     if not ENV.get("MCP_SECRET"):
-        sys.exit("MCP_SECRET missing in .env — deploy the MCP server first (UPLOAD_TO_VPS.bat)")
+        sys.exit("MCP_SECRET missing in .env — deploy the MCP server first (deploy.sh)")
     store.ensure_owner(OWNER_ID)
 
     app = Application.builder().token(BOT_TOKEN).post_init(post_init).build()

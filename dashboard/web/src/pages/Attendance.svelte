@@ -62,7 +62,7 @@
 {#if !d}
   <div class="skeleton" style="height:140px"></div><div class="skeleton"></div><div class="skeleton"></div>
 {:else if !d.subjects.length}
-  <div class="card empty">No attendance synced yet. If MyCamu's session expired, run SET_CAMU_COOKIE.bat.</div>
+  <div class="card empty">No attendance synced yet. If MyCamu's session expired, run set-camu-cookie on the server.</div>
 {:else}
   {@const o = d.overall}
   {#if o}

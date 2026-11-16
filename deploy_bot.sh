@@ -16,7 +16,7 @@ die()  { printf '\033[1;31m[x] %s\033[0m\n' "$*"; exit 1; }
 
 [[ -f "$APP_DIR/telegram_bot.py" ]] || die "telegram_bot.py not found next to deploy_bot.sh"
 [[ -f "$ENV_FILE" ]] && grep -q '^MCP_SECRET=' "$ENV_FILE" \
-  || die "The MCP server isn't set up here yet. Run UPLOAD_TO_VPS.bat first."
+  || die "The MCP server isn't set up here yet. Run deploy.sh first."
 systemctl is-active --quiet moodle-mcp || echo "[!] moodle-mcp isn't running right now — the bot will report that until it is."
 
 sed -i 's/\r$//' "$APP_DIR/set-bot-secrets" "$APP_DIR/requirements-bot.txt" 2>/dev/null || true
@@ -32,7 +32,7 @@ say "Setting up the bot's Python environment"
 if ! grep -q '^TELEGRAM_BOT_TOKEN=.' "$ENV_FILE" || ! grep -q '^OWNER_CHAT_ID=.' "$ENV_FILE"; then
   say "First-time bot setup"
   sudo systemctl stop $SERVICE 2>/dev/null || true
-  (cd "$APP_DIR" && .venv-bot/bin/python bot_setup.py) || die "Setup didn't finish. Re-run DEPLOY_BOT.bat."
+  (cd "$APP_DIR" && .venv-bot/bin/python bot_setup.py) || die "Setup didn't finish. Re-run deploy_bot.sh."
 fi
 
 say "Installing systemd service '$SERVICE'"
@@ -84,6 +84,6 @@ cat <<EOF
  Morning digest 07:45 IST · deadline pings 24h + 3h before · new LMS posts every 30 min
 
  Manage:   sudo systemctl status $SERVICE    |   sudo journalctl -u $SERVICE -f
- Secrets:  ~/moodle-mcp/set-bot-secrets      (or SET_BOT_SECRETS.bat on your PC)
+ Secrets:  ~/moodle-mcp/set-bot-secrets
  The MCP server (moodle-mcp) is separate and was not restarted.
 EOF

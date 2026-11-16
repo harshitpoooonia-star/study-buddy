@@ -47,11 +47,11 @@ ID_KEYS = ["InId", "PrID", "CrID", "DeptID", "SemID", "AcYr", "CmProgID", "StuID
 EXPIRED_MSG = (
     "MyCamu session expired — paste a fresh connect.sid. "
     "Log in to MyCamu in your browser, copy the connect.sid cookie, then run on your PC:\n"
-    "  SET_CAMU_COOKIE.bat   (or: ssh -t -i <oracle.key> ubuntu@<server> ~/moodle-mcp/set-camu-cookie)"
+    "  ssh -t ubuntu@<server> ~/moodle-mcp/set-camu-cookie"
 )
 NOT_SET_MSG = (
     "MyCamu isn't connected yet — no session cookie on the server. "
-    "Run SET_CAMU_COOKIE.bat on your PC and paste your connect.sid when it asks."
+    "Run ~/moodle-mcp/set-camu-cookie on the server and paste your connect.sid when it asks."
 )
 
 

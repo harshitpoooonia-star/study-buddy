@@ -49,7 +49,7 @@
 
   <div class="widget" bind:this={widget}></div>
   {#if cfg && !cfg.link_login && !cfg.bot_username}
-    <p class="muted small">Login isn't configured on the server yet. Run DEPLOY_DASH.bat.</p>
+    <p class="muted small">Login isn't configured on the server yet. Run deploy_dash.sh on the server.</p>
   {/if}
 </div>
 

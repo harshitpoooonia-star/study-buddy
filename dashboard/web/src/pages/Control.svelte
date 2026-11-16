@@ -57,7 +57,7 @@
   <div class="skeleton" style="height:180px"></div><div class="skeleton"></div>
 {:else}
   {#if c.camu.state === 'expired'}
-    <div class="banner danger"><span>🔑</span><div><b>MyCamu session expired.</b> Attendance and timetable are stale. Run <code>SET_CAMU_COOKIE.bat</code> on your PC to paste a fresh cookie.</div></div>
+    <div class="banner danger"><span>🔑</span><div><b>MyCamu session expired.</b> Attendance and timetable are stale. Run <code>~/moodle-mcp/set-camu-cookie</code> on the server to paste a fresh cookie.</div></div>
   {:else if c.camu.state === 'error'}
     <div class="banner warn"><div><b>MyCamu is failing.</b> {c.camu.error}</div></div>
   {/if}

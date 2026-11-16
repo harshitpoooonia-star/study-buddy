@@ -22,8 +22,8 @@ die()  { printf '\033[1;31m[x] %s\033[0m\n' "$*"; exit 1; }
 [[ -f "$APP_DIR/dashboard/app.py" ]] || die "dashboard/ not found next to deploy_dash.sh"
 [[ -f "$APP_DIR/dashboard/web/dist/index.html" ]] || die "dashboard/web/dist is missing — the frontend wasn't uploaded."
 [[ -x "$APP_DIR/.venv/bin/python" && -f "$ENV_FILE" ]] && grep -q '^MCP_SECRET=' "$ENV_FILE" \
-  || die "The MCP server isn't set up here yet. Run UPLOAD_TO_VPS.bat first."
-[[ -f /etc/systemd/system/moodle-mcp.service ]] || die "moodle-mcp service missing — run UPLOAD_TO_VPS.bat first."
+  || die "The MCP server isn't set up here yet. Run deploy.sh first."
+[[ -f /etc/systemd/system/moodle-mcp.service ]] || die "moodle-mcp service missing — run deploy.sh first."
 sed -i 's/\r$//' "$ENV_FILE" "$APP_DIR/requirements-bot.txt" 2>/dev/null || true
 
 get_env() { grep -E "^$1=" "$ENV_FILE" | tail -1 | cut -d= -f2- || true; }
@@ -54,7 +54,7 @@ DOMAIN="$(sudo head -1 "$SITE" 2>/dev/null | awk '{print $1}')"
 [[ -n "$(get_env DASH_ICS_TOKEN)" ]] || set_env DASH_ICS_TOKEN "$(python3 -c 'import secrets; print(secrets.token_urlsafe(24))')"
 set_env DASH_PUBLIC_URL "https://$DOMAIN"
 grep -q '^TELEGRAM_BOT_TOKEN=.' "$ENV_FILE" && grep -q '^OWNER_CHAT_ID=.' "$ENV_FILE" \
-  || warn "TELEGRAM_BOT_TOKEN / OWNER_CHAT_ID not set — dashboard login won't work until the bot is set up (DEPLOY_BOT.bat)."
+  || warn "TELEGRAM_BOT_TOKEN / OWNER_CHAT_ID not set — dashboard login won't work until the bot is set up (deploy_bot.sh)."
 
 say "Checking the dashboard imports in the MCP server's Python"
 for f in common collector app; do
@@ -133,7 +133,7 @@ if [[ -f /etc/systemd/system/study-bot.service && -x "$APP_DIR/.venv-bot/bin/pip
   systemctl is-active --quiet study-bot || { sudo journalctl -u study-bot -n 30 --no-pager; die "study-bot failed to start."; }
   sudo journalctl -u study-bot -n 15 --no-pager -o cat | grep -i "migrated" || true
 else
-  warn "study-bot isn't installed — run DEPLOY_BOT.bat, then re-run this."
+  warn "study-bot isn't installed — run deploy_bot.sh, then re-run this."
 fi
 
 # --------------------------------------------------------------------------- first sync + report

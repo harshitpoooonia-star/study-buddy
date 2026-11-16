@@ -1,4 +1,10 @@
-# moodle_mcp: Bennett LMS over MCP
+<p align="center"><img src="assets/banner.png" alt="Study Buddy" width="100%"></p>
+
+# Study Buddy
+
+Your Bennett LMS and ERP, read through MCP: an MCP server (`moodle_mcp.py`), a Telegram bot and a phone-first dashboard on top of it. Everything is read-only.
+
+## The MCP server
 
 An MCP server that gives any MCP client access to your Moodle LMS (`lms.bennett.edu.in`) through Moodle's
 official web-service API, the same one the Moodle mobile app uses. It logs in with a
@@ -26,7 +32,8 @@ All tools are **read-only**. Nothing is submitted, posted, or marked as read.
 ## Setup (≈5 min)
 
 ```bash
-cd moodle-mcp
+git clone https://github.com/harshitpoooonia-star/study-buddy.git
+cd study-buddy
 python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
@@ -65,18 +72,22 @@ python -c "import asyncio, moodle_mcp as m; print(asyncio.run(m.moodle_whoami())
 {
   "mcpServers": {
     "bennett-lms": {
-      "command": "C:\\path\\to\\moodle-mcp\\.venv\\Scripts\\python.exe",
-      "args": ["C:\\path\\to\\moodle-mcp\\moodle_mcp.py"]
+      "command": "C:\\path\\to\\study-buddy\\.venv\\Scripts\\python.exe",
+      "args": ["C:\\path\\to\\study-buddy\\moodle_mcp.py"]
     }
   }
 }
 ```
-(macOS/Linux: `/path/to/moodle-mcp/.venv/bin/python`.) Restart the client.
+(macOS/Linux: `/path/to/study-buddy/.venv/bin/python`.) Restart the client.
 
 **Remote (VPS), so it works from any device:**
-1. Double-click `UPLOAD_TO_VPS.bat` and enter your VPS login (e.g. `ubuntu@1.2.3.4`). It uploads the
-   server and runs `deploy.sh`, which installs Python deps, a `moodle-mcp` systemd service, and Caddy
-   with free HTTPS on `<your-ip>.sslip.io`.
+1. Copy the folder to the VPS as `~/moodle-mcp` and run `deploy.sh` there:
+   ```bash
+   scp -r . ubuntu@1.2.3.4:~/moodle-mcp
+   ssh -t ubuntu@1.2.3.4 'bash ~/moodle-mcp/deploy.sh'
+   ```
+   It installs Python deps, a `moodle-mcp` systemd service, and Caddy with free HTTPS on
+   `<your-ip>.sslip.io`. Copy your `.env` across too, or the script asks for the token.
 2. Copy the printed **connector URL** (`https://<ip>.sslip.io/<secret>/mcp`) into your MCP client's
    custom connector settings. It then works on web, phone and desktop.
 3. Oracle Cloud: also add Ingress rules for TCP 80 and 443 in the VCN Security List.
@@ -118,8 +129,7 @@ It lives only in the server's `.env` as `MYCAMU_COOKIE` (chmod 600). It is never
 
 **Set or rotate the cookie** (also do this when a tool says the session expired):
 1. Log in at https://student.bennetterp.camu.in, then press F12 → Application → Cookies → copy the `connect.sid` value.
-2. Double-click `SET_CAMU_COOKIE.bat` and paste the value when asked (input is hidden).
-   One-liner equivalent: `ssh -t -i <path-to-your-ssh-key> ubuntu@<your-vps-ip> ~/moodle-mcp/set-camu-cookie`
+2. Run `ssh -t ubuntu@<your-vps-ip> ~/moodle-mcp/set-camu-cookie` and paste the value when asked (input is hidden).
 
 The server verifies the cookie, then restarts. It pings `getvalidationstatus` once a day to keep the session alive,
 saves the rolled cookie if MyCamu rotates it, caches responses for 10 minutes, and spaces calls at least 2 s apart.
@@ -132,9 +142,10 @@ A Telegram front-end on top of the MCP server above. It runs as a **separate** s
 `http://127.0.0.1:8765/<MCP_SECRET>/mcp`. So a bot crash can't take the connector down. If the MCP
 server goes down, the bot messages you once and again when it's back.
 
-**Install:** message @BotFather on Telegram, send `/newbot`, then double-click `DEPLOY_BOT.bat`.
-On the first run it asks for the bot token (hidden), an optional Groq key, and asks you to press
-Start in your bot to link your account. To change any of these later, run `SET_BOT_SECRETS.bat`.
+**Install:** message @BotFather on Telegram, send `/newbot`, then run
+`ssh -t ubuntu@<your-vps-ip> 'bash ~/moodle-mcp/deploy_bot.sh'`. On the first run it asks for the bot
+token (hidden), an optional Groq key, and asks you to press Start in your bot to link your account.
+To change any of these later, run `~/moodle-mcp/set-bot-secrets` on the VPS.
 
 | Command | What it shows |
 |---|---|
@@ -165,12 +176,12 @@ students needs per-user LMS tokens and MyCamu cookies in the MCP server first (s
 
 A phone-first web app at `https://<your-host>/dash/`:
 
-- **Today:** current/next class with a countdown, what's due or examined in 48 h, attendance warnings, unread counts
-- **Deadlines:** timeline/board views, course filter, started/done/snooze marks, your own entries and exams, ICS calendar feed
-- **Attendance:** a gauge per subject with attend-next / can-skip, plus a **What if…** planner (tick classes you'll miss and see every subject's %)
-- **Timetable:** week view, free slots, exams, an exam-week banner
-- **Grades:** LMS marks, credits and the grade you expect per course, SGPA, and CGPA including past semesters
-- **Bot settings** (⋯ menu): turn automatic messages on/off, digest time, reminder hours, muted courses
+- Today: current/next class with a countdown, what's due or examined in 48 h, attendance warnings, unread counts
+- Deadlines: timeline/board views, course filter, started/done/snooze marks, your own entries and exams, ICS calendar feed
+- Attendance: a gauge per subject with attend-next / can-skip, plus a **What if…** planner (tick classes you'll miss and see every subject's %)
+- Timetable: week view, free slots, exams, an exam-week banner
+- Grades: LMS marks, credits and the grade you expect per course, SGPA, and CGPA including past semesters
+- Bot settings (⋯ menu): turn automatic messages on/off, digest time, reminder hours, muted courses
 
 **How it's wired (one box, 1 GB RAM)**
 
@@ -187,8 +198,10 @@ scheduler tick, with no HTTP between them. On its first start after the merge, t
 `study.db` and keeps `bot.db.bak` for a week. There is one file to back up:
 `sqlite3 study.db ".backup study-backup.db"`.
 
-**Deploy / update:** double-click `DEPLOY_DASH.bat`. It rebuilds the frontend if Node is installed, uploads, and runs
-`deploy_dash.sh`, which adds 2 GB swap (swappiness 10) if there's none, sets the caps, installs the timer, restarts
+**Deploy / update:** build the frontend (`cd dashboard/web && npm ci && npm run build`), or take
+`dashboard-dist.zip` from the [latest release](https://github.com/harshitpoooonia-star/study-buddy/releases/latest)
+and unzip it into `dashboard/web/dist`. Upload the folder as before and run `bash ~/moodle-mcp/deploy_dash.sh`
+on the VPS. The script adds 2 GB swap (swappiness 10) if there's none, sets the caps, installs the timer, restarts
 moodle-mcp and the bot, runs a first sync, and prints `free -m` plus per-service memory.
 
 **Sign in:** tap *Send login link to Telegram*. Optional: in @BotFather run `/setdomain` with your host to enable the
@@ -200,7 +213,7 @@ courses. Reminders follow your reminder hours, the same as deadlines. Scanned-im
 rows as text instead. Outlook stays out (university tenants block Graph access).
 
 **Calendar:** Deadlines → Calendar feed → *Add to Google Calendar*. To revoke the URL, delete `DASH_ICS_TOKEN` from
-`~/moodle-mcp/.env` and re-run `DEPLOY_DASH.bat`.
+`~/moodle-mcp/.env` and re-run `deploy_dash.sh`.
 
 **Frontend dev (PC):** `cd dashboard\web && npm install && npm run dev`. It proxies `/dash/api` to 127.0.0.1:8770, so run
 `python -m dashboard.app --serve` alongside it.
@@ -210,3 +223,7 @@ rows as text instead. Outlook stays out (university tenants block Graph access).
 | Sync now | the sync chip in the app (max once per 2 min) or `sudo systemctl start study-collect` |
 | Logs | `journalctl -u moodle-mcp -f` · `journalctl -u study-bot -f` · `journalctl -u study-collect -n 50` |
 | Memory | `systemd-cgtop -m` (per service) · `free -m` (overall) |
+
+## License
+
+MIT. See [LICENSE](LICENSE).

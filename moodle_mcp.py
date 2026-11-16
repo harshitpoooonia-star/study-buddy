@@ -121,7 +121,7 @@ mcp = MCPServer(
         "Use moodle_read_file to read lecture slides, PDFs and assignment briefs. "
         "For attendance, class timetable, exam schedule, results, university announcements and "
         "ERP notifications use the mycamu_* tools (Bennett's MyCamu ERP); if they report an "
-        "expired session, tell the user to run SET_CAMU_COOKIE.bat. "
+        "expired session, tell the user to run ~/moodle-mcp/set-camu-cookie on the server. "
         "All times are shown in the student's local timezone."
     ),
 )
