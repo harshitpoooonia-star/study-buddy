@@ -45,12 +45,12 @@ OUT_LIMIT = 20_000
 ID_KEYS = ["InId", "PrID", "CrID", "DeptID", "SemID", "AcYr", "CmProgID", "StuID"]
 
 EXPIRED_MSG = (
-    "MyCamu session expired — paste a fresh connect.sid. "
+    "MyCamu session expired - paste a fresh connect.sid. "
     "Log in to MyCamu in your browser, copy the connect.sid cookie, then run on your PC:\n"
     "  ssh -t ubuntu@<server> ~/moodle-mcp/set-camu-cookie"
 )
 NOT_SET_MSG = (
-    "MyCamu isn't connected yet — no session cookie on the server. "
+    "MyCamu isn't connected yet - no session cookie on the server. "
     "Run ~/moodle-mcp/set-camu-cookie on the server and paste your connect.sid when it asks."
 )
 
@@ -382,7 +382,7 @@ def _fmt_attendance(data: Any) -> str:
     if not isinstance(d, dict):
         return _fmt(data, "Attendance")
     subs = d.get("subjectList") or d.get("aSubjectList") or []
-    lines = [f"# Attendance — {_sem_label}" if _sem_label else "# Attendance", ""]
+    lines = [f"# Attendance - {_sem_label}" if _sem_label else "# Attendance", ""]
     if d.get("OvrAllPrcntg") is not None:
         lines.append(f"**Overall: {d.get('OvrAllPrcntg')}%** ({d.get('OvrAllPCnt', '?')}/{d.get('OvrAllCnt', '?')} classes)"
                      + (f" · this month {d.get('CurMnthPrcntg')}%" if d.get("CurMnthPrcntg") is not None else ""))
@@ -470,7 +470,7 @@ def register(mcp: Any, read_only: Any) -> None:
             data = await _request("POST", "/api/Timetable/get", body)
             return _fmt_timetable(data, f"Timetable {start:%a %d %b} – {end:%a %d %b}")
         except CamuInfo as e:
-            return f"MyCamu says: {e} (common during mid/end-sem weeks — try a different week with start_date)."
+            return f"MyCamu says: {e} (common during mid/end-sem weeks - try a different week with start_date)."
         except Exception as e:
             return _err(e)
 
@@ -483,7 +483,7 @@ def register(mcp: Any, read_only: Any) -> None:
             data = await _request("POST", "/api/ExamSchdl/getExamSchdl", dict(ids))
             if not _unwrap(data):
                 return ("No exam schedule is published on MyCamu for " + (_sem_label or "this semester") +
-                        ". Bennett usually emails the CoE date sheet and seating plan — check Outlook.")
+                        ". Bennett usually emails the CoE date sheet and seating plan - check Outlook.")
             return _fmt(data, "Exam schedule")
         except CamuInfo as e:
             return f"MyCamu says: {e}"
@@ -498,7 +498,7 @@ def register(mcp: Any, read_only: Any) -> None:
             await get_ids()
             recs = _unwrap(_progress_raw)
             recs = [r for r in (recs if isinstance(recs, list) else [recs]) if isinstance(r, dict)]
-            lines = [f"# Semester history ({len(recs)} records) — current: {_sem_label}", "",
+            lines = [f"# Semester history ({len(recs)} records) - current: {_sem_label}", "",
                      "| Semester | Academic year | Status | Programme |", "|---|---|---|---|"]
             for r in recs:
                 lines.append(f"| {r.get('SemName', '')} | {r.get('AcYrNm', '')} | {r.get('stustatus', '')} | {r.get('CrName', '')} |")
@@ -554,7 +554,7 @@ def register(mcp: Any, read_only: Any) -> None:
         try:
             await check_session()
             await get_ids()
-            return f"MyCamu session is active ✅ — current semester: {_sem_label}"
+            return f"MyCamu session is active ✅ - current semester: {_sem_label}"
         except Exception as e:
             st = _read_status()
             when = datetime.fromtimestamp(st["checked"]).strftime("%d %b %H:%M") if st.get("checked") else "never"

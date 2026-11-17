@@ -25,7 +25,7 @@
       await api('settings', { method: 'POST', body: {
         alerts_paused: s.alerts_paused, digest_time: s.digest_time, alert_hours: s.alert_hours, muted_courses: s.muted_courses,
       } })
-      toast('Saved — the bot picks this up within a minute')
+      toast('Saved - the bot picks this up within a minute')
       onclose()
     } catch (e) { toast(e.message) }
     saving = false

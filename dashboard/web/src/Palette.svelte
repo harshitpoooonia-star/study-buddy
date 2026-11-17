@@ -68,7 +68,7 @@
 <div class="pal card glass" role="dialog" aria-modal="true" aria-label="Search">
   <div class="inp">
     {@html I.search}
-    <input bind:this={input} bind:value={q} onkeydown={key} placeholder="Jump to a course, deadline, page — or search notes &amp; slides" autocomplete="off" spellcheck="false" enterkeyhint="go" />
+    <input bind:this={input} bind:value={q} onkeydown={key} placeholder="Jump to a course, deadline, page - or search notes &amp; slides" autocomplete="off" spellcheck="false" enterkeyhint="go" />
     <kbd>esc</kbd>
   </div>
   <ul class="list" role="listbox">

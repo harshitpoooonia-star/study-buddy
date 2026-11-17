@@ -61,7 +61,7 @@
   <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
 {:else}
   {#if d.status?.status === 'not_finalised'}
-    <div class="banner warn"><span>📝</span><div><b>Timetable not finalised.</b> MyCamu says “{d.status.note || 'No timetable found'}” — usually a mid/end-sem exam week. Check Outlook for the date sheet.</div></div>
+    <div class="banner warn"><span>📝</span><div><b>Timetable not finalised.</b> MyCamu says “{d.status.note || 'No timetable found'}” - usually a mid/end-sem exam week. Check Outlook for the date sheet.</div></div>
   {:else if !d.status && total === 0}
     <div class="banner warn"><div>This week isn't synced. The collector keeps the current and next week; earlier weeks stay once they've been seen.</div></div>
   {/if}

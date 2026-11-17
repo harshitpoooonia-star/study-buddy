@@ -9,7 +9,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 echo "Paste your MyCamu connect.sid value (input is hidden), then press Enter:"
 IFS= read -r -s RAW
 echo
-[[ -n "$RAW" ]] || { echo "Nothing pasted — no change made."; exit 1; }
+[[ -n "$RAW" ]] || { echo "Nothing pasted - no change made."; exit 1; }
 
 CAMU_RAW="$RAW" .venv/bin/python - <<'PY'
 import os, re
@@ -18,7 +18,7 @@ v = os.environ["CAMU_RAW"].strip().strip('"').strip("'")
 v = re.sub(r"^\s*connect\.sid\s*=\s*", "", v)   # accept "connect.sid=..." too
 v = v.split(";")[0].strip()                       # drop any trailing cookie attributes
 if not v or any(c.isspace() for c in v):
-    raise SystemExit("That doesn't look like a connect.sid value — no change made.")
+    raise SystemExit("That doesn't look like a connect.sid value - no change made.")
 env = Path(".env")
 lines = env.read_text().splitlines() if env.exists() else []
 lines = [l for l in lines if not l.startswith("MYCAMU_COOKIE=")] + [f"MYCAMU_COOKIE={v}"]
@@ -31,7 +31,7 @@ rm -f mycamu_status.json
 
 echo "Checking with MyCamu…"
 if .venv/bin/python mycamu.py check; then
-  sudo systemctl restart moodle-mcp && echo "Server restarted — MyCamu tools are live."
+  sudo systemctl restart moodle-mcp && echo "Server restarted - MyCamu tools are live."
 else
   echo "MyCamu rejected that cookie. Log in to MyCamu again, copy a fresh connect.sid, and re-run."
   exit 2

@@ -2,6 +2,8 @@
 
 # Study Buddy
 
+[![ci](https://github.com/harshitpoooonia-star/study-buddy/actions/workflows/ci.yml/badge.svg)](https://github.com/harshitpoooonia-star/study-buddy/actions/workflows/ci.yml)
+
 Your Bennett LMS and ERP, read through MCP: an MCP server (`moodle_mcp.py`), a Telegram bot and a phone-first dashboard on top of it. Everything is read-only.
 
 ## The MCP server

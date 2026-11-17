@@ -1,4 +1,4 @@
-"""Ask — chat box on the dashboard, same free Groq path as the Telegram bot.
+"""Ask - chat box on the dashboard, same free Groq path as the Telegram bot.
 
 Runs inside the moodle-mcp process; reaches the MCP tools over localhost HTTP like the bot does, plus
 two local tools that read the dashboard's own database (indexed course material, deadlines/notes).
@@ -36,7 +36,7 @@ LOCAL_TOOLS = [
     {"type": "function", "function": {
         "name": "search_course_content",
         "description": "Full-text search over the student's indexed course material (slide/notes/PDF text, activity "
-                       "names, announcements). Fast and free — try this FIRST for syllabus, lecture, formula or "
+                       "names, announcements). Fast and free - try this FIRST for syllabus, lecture, formula or "
                        "'where is X' questions. Returns snippets plus file URLs for moodle_read_file.",
         "parameters": {"type": "object", "properties": {
             "query": {"type": "string", "description": "Keywords, e.g. 'pumping lemma' or 'midterm syllabus'."},
@@ -102,7 +102,7 @@ def local_search(q: str, course: str = "", limit: int = 6) -> list[dict]:
         if common.HAS_FTS:
             try:
                 out = [dict(r) for r in con.execute(sql, args)]
-            except Exception:  # noqa: BLE001 — malformed MATCH expression
+            except Exception:  # noqa: BLE001 - malformed MATCH expression
                 out = []
         if not out:
             like = f"%{q.strip()[:60]}%"
@@ -201,7 +201,7 @@ async def _groq(model: str, messages: list[dict], tools: list[dict]) -> dict:
         r = await c.post(GROQ_URL,
                          headers={"Authorization": f"Bearer {GROQ_KEY}"}, json=body)
     if r.status_code == 429:
-        raise AskError("The free AI tier is busy right now — try again in a minute.")
+        raise AskError("The free AI tier is busy right now - try again in a minute.")
     if r.status_code >= 400:
         raise AskError(f"AI service error (HTTP {r.status_code}).")
     return r.json()["choices"][0]["message"]
@@ -278,7 +278,7 @@ async def ask(question: str, history: list[dict]) -> dict:
                                 used_tools.append(name)
                             messages.append({"role": "tool", "tool_call_id": call.get("id", ""),
                                              "content": res[:cap] + ("\n…[truncated]" if len(res) > cap else "")})
-                    raise AskError("The AI needed too many steps — try a more specific question.")
+                    raise AskError("The AI needed too many steps - try a more specific question.")
                 except AskError as e:
                     last = e
                     continue

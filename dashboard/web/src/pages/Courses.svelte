@@ -99,7 +99,7 @@
   {#if results}
     <div class="section"><h2>Results</h2><span class="count num">{results.length}</span></div>
     <div class="card">
-      {#if !results.length}<div class="empty">Nothing found{list?.indexed_state.todo ? ` — ${list.indexed_state.todo} files haven't been read yet, so try again later` : ''}.</div>{/if}
+      {#if !results.length}<div class="empty">Nothing found{list?.indexed_state.todo ? ` - ${list.indexed_state.todo} files haven't been read yet, so try again later` : ''}.</div>{/if}
       <ul class="list">
         {#each results as h}
           <li>

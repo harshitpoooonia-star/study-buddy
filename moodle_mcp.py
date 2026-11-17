@@ -275,7 +275,7 @@ def clip(text: str) -> str:
         return text
     return (
         text[:CHARACTER_LIMIT]
-        + f"\n\n…[truncated at {CHARACTER_LIMIT} chars — narrow the request, e.g. filter by course_id]"
+        + f"\n\n…[truncated at {CHARACTER_LIMIT} chars - narrow the request, e.g. filter by course_id]"
     )
 
 
@@ -367,7 +367,7 @@ async def moodle_list_courses(
         for c in courses:
             prog = c.get("progress")
             prog_s = f" · progress {prog:.0f}%" if isinstance(prog, (int, float)) else ""
-            lines.append(f"- **{c['fullname']}** — `{c.get('shortname', '')}` (id {c['id']}){prog_s}")
+            lines.append(f"- **{c['fullname']}** - `{c.get('shortname', '')}` (id {c['id']}){prog_s}")
         return "\n".join(lines)
     except Exception as e:
         return _error(e)
@@ -440,7 +440,7 @@ async def moodle_get_course_contents(
                     if f.get("type") == "file":
                         size = f.get("filesize") or 0
                         lines.append(
-                            f"  - 📄 {f.get('filename')} ({size // 1024} KB) — `{f.get('fileurl')}`"
+                            f"  - 📄 {f.get('filename')} ({size // 1024} KB) - `{f.get('fileurl')}`"
                         )
                     elif f.get("type") == "url":
                         lines.append(f"  - 🔗 {f.get('fileurl')}")
@@ -465,8 +465,8 @@ async def moodle_get_upcoming_deadlines(
     limit: Annotated[int, Field(ge=1, le=100)] = 50,
     response_format: Fmt = "markdown",
 ) -> str:
-    """List everything with a due date across all courses — assignments, quizzes, forum
-    deadlines, etc. — from the LMS timeline, sorted soonest first.
+    """List everything with a due date across all courses - assignments, quizzes, forum
+    deadlines, etc. - from the LMS timeline, sorted soonest first.
 
     Items flagged 'action required' are ones Moodle thinks you still need to do (e.g. not yet
     submitted). Use moodle_get_assignment_status for submission details on a specific item.
@@ -508,7 +508,7 @@ async def moodle_get_upcoming_deadlines(
             course = (e.get("course") or {}).get("fullname", "")
             act = e.get("action") or {}
             flag = " ⚠️ OVERDUE" if e.get("overdue") else ""
-            todo = f" — _{act.get('name')}_" if act.get("actionable") else ""
+            todo = f" - _{act.get('name')}_" if act.get("actionable") else ""
             lines.append(
                 f"- **{fmt_ts(ts)}** ({rel(ts)}){flag} · {course} · "
                 f"[{e.get('modulename', '')}] {e.get('activityname') or e.get('name')}{todo}"
@@ -587,7 +587,7 @@ async def moodle_list_assignments(
             if r.get("intro"):
                 lines.append("- Brief: " + r["intro"].replace("\n", "\n  "))
             for f in r.get("files") or []:
-                lines.append(f"- 📄 {f['name']} — `{f['url']}`")
+                lines.append(f"- 📄 {f['name']} - `{f['url']}`")
             lines.append("")
         return clip("\n".join(lines))
     except Exception as e:
@@ -757,7 +757,7 @@ async def moodle_get_grades(
         items = (data.get("usergrades") or [{}])[0].get("gradeitems", [])
         if response_format == "json":
             return as_json(items)
-        lines = [f"# Grades — course {course_id}", ""]
+        lines = [f"# Grades - course {course_id}", ""]
         for it in items:
             name = it.get("itemname") or ("Course total" if it.get("itemtype") == "course" else "Category")
             g = it.get("gradeformatted") or "—"
@@ -780,7 +780,7 @@ async def moodle_get_announcements(
     include_message: Annotated[bool, Field(description="Include each post's first message text.")] = True,
     response_format: Fmt = "markdown",
 ) -> str:
-    """Read a course's forums — the Announcements/News forum where faculty post deadlines,
+    """Read a course's forums - the Announcements/News forum where faculty post deadlines,
     test notices and schedule changes, plus any discussion forums. Newest first.
     """
     try:
@@ -825,7 +825,7 @@ async def moodle_get_announcements(
             if p.get("message"):
                 lines.append(p["message"])
             for a in p["attachments"]:
-                lines.append(f"- 📎 {a['name']} — `{a['url']}`")
+                lines.append(f"- 📎 {a['name']} - `{a['url']}`")
             lines.append("")
         return clip("\n".join(lines))
     except Exception as e:
@@ -861,7 +861,7 @@ async def moodle_get_notifications(
         lines = [f"# Notifications ({len(notes)})", ""]
         for n in notes:
             dot = "🔵 " if not n.get("read") else ""
-            lines.append(f"- {dot}**{n.get('subject')}** — {fmt_ts(n.get('timecreated'))}")
+            lines.append(f"- {dot}**{n.get('subject')}** - {fmt_ts(n.get('timecreated'))}")
             sm = strip_html(n.get("smallmessage") or n.get("fullmessage"), 250)
             if sm and sm != n.get("subject"):
                 lines.append(f"  - {sm}")
@@ -1028,7 +1028,7 @@ async def moodle_read_file(
         async with httpx.AsyncClient(timeout=120, follow_redirects=True) as client:
             resp = await client.get(with_token(file_url))
         if resp.status_code == 404:
-            return ("Error: The LMS says this file doesn't exist (404). It may have been replaced — "
+            return ("Error: The LMS says this file doesn't exist (404). It may have been replaced - "
                     "re-fetch the link with moodle_get_course_contents and try again.")
         if resp.status_code == 403:
             return ("Error: The LMS refused this file (403). It may be hidden or restricted for students, "
@@ -1057,9 +1057,9 @@ async def moodle_read_file(
             return [header + "\n(Image attached below.)", Image(data=img, format=fmt)]
         text = _extract_text(resp.content, filename, ctype, max_chars)
         if text is None:
-            return header + "\n(Binary file type — no text extraction available.)"
+            return header + "\n(Binary file type - no text extraction available.)"
         if len(text) > max_chars:
-            text = text[:max_chars] + f"\n\n…[truncated; {len(text)} chars total — raise max_chars to read more]"
+            text = text[:max_chars] + f"\n\n…[truncated; {len(text)} chars total - raise max_chars to read more]"
         return header + "\n" + text
     except Exception as e:
         return _error(e)
@@ -1134,13 +1134,13 @@ async def moodle_semester_overview(
         overdue = [i for i in items if i["kind"] == "assignment" and i["due"] < now and i["status"] not in done_states]
         upcoming = [i for i in items if i["due"] >= now]
 
-        lines = [f"# Semester overview — {info.get('fullname')}", f"_As of {fmt_ts(int(now))}_", ""]
+        lines = [f"# Semester overview - {info.get('fullname')}", f"_As of {fmt_ts(int(now))}_", ""]
         lines.append(f"**Current courses ({len(courses)}):** " + ", ".join(sorted(cname.values())))
         lines.append("")
         if overdue:
             lines.append("## ⚠️ Overdue / not submitted")
             for i in overdue:
-                lines.append(f"- {i['course']} · **{i['name']}** — was due {fmt_ts(i['due'])} · status: {i['status']} (assign_id {i['id']})")
+                lines.append(f"- {i['course']} · **{i['name']}** - was due {fmt_ts(i['due'])} · status: {i['status']} (assign_id {i['id']})")
             lines.append("")
         lines.append(f"## Due in the next {days_ahead} days")
         if not upcoming:
@@ -1149,12 +1149,12 @@ async def moodle_semester_overview(
             mark = "✅" if i["status"] in done_states else "⬜"
             lines.append(
                 f"- {mark} **{fmt_ts(i['due'])}** ({rel(i['due'])}) · {i['course']} · "
-                f"[{i['kind']}] {i['name']} — {i['status']} (id {i['id']})"
+                f"[{i['kind']}] {i['name']} - {i['status']} (id {i['id']})"
             )
         if isinstance(assigns_data, Exception) or isinstance(quiz_data, Exception):
             lines.append("\n_Note: some data couldn't be loaded: "
                          + "; ".join(_error(x) for x in (assigns_data, quiz_data) if isinstance(x, Exception)) + "_")
-        lines.append("\n_Faculty sometimes post deadlines only in announcements — check moodle_get_announcements for each course._")
+        lines.append("\n_Faculty sometimes post deadlines only in announcements - check moodle_get_announcements for each course._")
         return clip("\n".join(lines))
     except Exception as e:
         return _error(e)
@@ -1166,7 +1166,7 @@ async def moodle_semester_overview(
 
 
 # ---------------------------------------------------------------------------
-# MyCamu (Bennett ERP) tools — attendance, timetable, exams, results, announcements
+# MyCamu (Bennett ERP) tools - attendance, timetable, exams, results, announcements
 # ---------------------------------------------------------------------------
 
 import mycamu  # noqa: E402
@@ -1241,7 +1241,7 @@ def main() -> None:
     p.add_argument("--port", type=int, default=8765)
     args = p.parse_args()
     if not MOODLE_TOKEN:
-        print("warning: MOODLE_TOKEN not set — tools will return a setup error.", file=sys.stderr)
+        print("warning: MOODLE_TOKEN not set - tools will return a setup error.", file=sys.stderr)
     _log(f"imports ok; token set={bool(MOODLE_TOKEN)}; starting {'http' if args.http else 'stdio'}")
     if args.http:
         mycamu.start_keepalive()  # daily MyCamu session ping (server only)

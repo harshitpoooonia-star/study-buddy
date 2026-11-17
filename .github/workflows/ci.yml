@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt -r requirements-bot.txt pyflakes
+      - run: python -m pyflakes *.py dashboard/*.py
+      - name: Modules import
+        env:
+          MOODLE_URL: https://lms.example.edu
+          MOODLE_TOKEN: ci
+          DASH_SECRET: ci-only-secret-not-used-anywhere-0123456789
+        run: python -c "import moodle_mcp, mycamu, datesheet, telegram_bot, dashboard.app, dashboard.collector"
+
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: dashboard/web/package-lock.json
+      - run: npm ci && npm run build
+        working-directory: dashboard/web

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Study Buddy — Telegram bot for Bennett LMS (Moodle) + MyCamu.
+Study Buddy - Telegram bot for Bennett LMS (Moodle) + MyCamu.
 
 It is a *client* of the moodle-mcp server running on the same machine: every bit of data
 comes from the same MCP tools the connector serves (http://127.0.0.1:<port>/<MCP_SECRET>/mcp). The bot
@@ -15,7 +15,7 @@ Features
   Pushes     morning digest (07:45 IST), deadline pings 24h and 3h before, new LMS
              notifications (every 30 min), new course items (every 3 h), MyCamu cookie expiry.
 
-Config (.env next to this file — same file the MCP server uses)
+Config (.env next to this file - same file the MCP server uses)
   TELEGRAM_BOT_TOKEN   from @BotFather                    (required; set with set-bot-secrets)
   OWNER_CHAT_ID        your Telegram chat id              (required; set with set-bot-secrets)
   MCP_SECRET           already there (deploy.sh made it)
@@ -144,7 +144,7 @@ mcp = MCP(MCP_URL)
 
 # --------------------------------------------------------------------------- storage
 # One SQLite file shared with the dashboard (study.db, WAL). The bot owns the bot_* tables; `settings`,
-# `exams` and `manual_entries` are shared — the dashboard writes settings, the bot re-reads them on
+# `exams` and `manual_entries` are shared - the dashboard writes settings, the bot re-reads them on
 # every scheduler tick. Keep the shared DDL in sync with dashboard/common.py.
 
 SHARED_DDL = """
@@ -410,7 +410,7 @@ def render_attendance(md: str, only_low: bool = False) -> str:
             continue
         icon = "⚠️" if bad else ("✅" if note.startswith("✅") else "▫️")
         note = note.lstrip("⚠️✅ ").strip()
-        out.append(f"{icon} <b>{esc(subj)}</b> ({esc(code)}) — {esc(pct)}% ({esc(present)}/{esc(total)}) · {esc(note)}")
+        out.append(f"{icon} <b>{esc(subj)}</b> ({esc(code)}) - {esc(pct)}% ({esc(present)}/{esc(total)}) · {esc(note)}")
     if only_low and not low:
         return ""
     if not rows:
@@ -449,7 +449,7 @@ def render_deadlines(items: list[dict], title: str) -> str:
         kind = {"assign": "📝", "quiz": "❓", "forum": "💬"}.get(e.get("type", ""), "•")
         name = e.get("activity") or e.get("name")
         link = f' · <a href="{html.escape(e["url"])}">open</a>' if e.get("url") else ""
-        out.append(f"{kind} <b>{esc(name)}</b> — {esc(short_course(e.get('course')))}")
+        out.append(f"{kind} <b>{esc(name)}</b> - {esc(short_course(e.get('course')))}")
         out.append(f"     {flag}{esc(fmt_due(due))} ({esc(rel(due))})"
                    + (f" · {esc(e['action'])}" if e.get("action") else "") + link)
     return "\n".join(out)
@@ -478,7 +478,7 @@ def _notif_line(n: dict, body: bool) -> str:
     subj = n.get("contexturlname") or n.get("subject") or "Notification"
     course = short_course((n.get("subject") or "").split("):")[0] + ")") if "):" in (n.get("subject") or "") else ""
     when = datetime.fromtimestamp(int(n.get("timecreated") or 0), TZ).strftime("%d %b, %I:%M %p")
-    line = f"{icon} <b>{esc(subj)}</b>" + (f" — {esc(course)}" if course else "") + f"\n     <i>{esc(when)}</i>"
+    line = f"{icon} <b>{esc(subj)}</b>" + (f" - {esc(course)}" if course else "") + f"\n     <i>{esc(when)}</i>"
     if n.get("contexturl"):
         line += f' · <a href="{html.escape(n["contexturl"])}">open</a>'
     if body and comp == "mod_forum":
@@ -537,17 +537,17 @@ async def guard(update: Update) -> bool:
 
 HELP = (
     "🎓 <b>Study Buddy</b>\n\n"
-    "/today — today's classes + what's due in 48h\n"
-    "/tomorrow — tomorrow's classes\n"
-    "/week — timetable for the next 7 days\n"
-    "/deadlines — everything due in 14 days (+ overdue)\n"
-    "/attendance — attendance with the 75% check\n"
-    "/grades — course totals\n"
-    "/exams — your saved exams + MyCamu's schedule\n"
-    "/news — latest LMS notifications\n"
-    "/notices — MyCamu announcements (7 days)\n"
-    "/status — server, MyCamu and AI status\n"
-    "/alerts on|off — pause or resume automatic messages\n\n"
+    "/today - today's classes + what's due in 48h\n"
+    "/tomorrow - tomorrow's classes\n"
+    "/week - timetable for the next 7 days\n"
+    "/deadlines - everything due in 14 days (+ overdue)\n"
+    "/attendance - attendance with the 75% check\n"
+    "/grades - course totals\n"
+    "/exams - your saved exams + MyCamu's schedule\n"
+    "/news - latest LMS notifications\n"
+    "/notices - MyCamu announcements (7 days)\n"
+    "/status - server, MyCamu and AI status\n"
+    "/alerts on|off - pause or resume automatic messages\n\n"
     "📄 <b>Forward the CoE date sheet</b> (PDF or text) and I'll pick out your exams and remind you.\n\n"
     "Or just ask: <i>“can I skip IoT tomorrow?”</i>, <i>“automata midsem syllabus”</i>, "
     "<i>“IoT lecture 5 slides”</i>"
@@ -630,7 +630,7 @@ async def cmd_grades(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 async def _exams_text() -> str:
     saved = upcoming_exams(120)
     head = render_exams(saved, "Your exams") if saved else (
-        "📝 No saved exams yet — forward the CoE date sheet (PDF or text) to me.")
+        "📝 No saved exams yet - forward the CoE date sheet (PDF or text) to me.")
     return head + "\n\n" + await _tool_text("mycamu_get_exam_schedule", "🧾")
 
 
@@ -665,7 +665,7 @@ async def _status_text(chat_id: int) -> str:
     if GROQ_KEY:
         lines.append(f"🤖 AI: Groq free tier ({esc(GROQ_MODELS[0])}) · used today {store.ai_used(chat_id)}/{AI_DAILY_LIMIT}")
     else:
-        lines.append("🤖 AI: off (no GROQ_API_KEY) — keyword answers only")
+        lines.append("🤖 AI: off (no GROQ_API_KEY) - keyword answers only")
     paused = store.setting("alerts_paused") == "1"
     hrs = " + ".join(f"{h}h" for h in alert_hours())
     lines.append(f"🔔 Alerts: {'paused' if paused else 'on'} · digest at {store.setting('digest_time')} · "
@@ -717,7 +717,7 @@ def _day_offset(t: str) -> int | None:
 
 # --------------------------------------------------------------------------- course materials (files, slides, syllabus)
 
-_FILE = re.compile(r"^\s+- 📄 (.+?) \((\d+) KB\) — `([^`]+)`")
+_FILE = re.compile(r"^\s+- 📄 (.+?) \((\d+) KB\) - `([^`]+)`")
 _course_cache: list[Any] = [0.0, []]
 _contents_cache: dict[int, tuple[float, list[dict]]] = {}
 _STOP = {"give", "what", "whats", "show", "send", "with", "from", "about", "this", "that", "course",
@@ -841,7 +841,7 @@ async def materials_answer(text: str) -> str:
         if every:
             out = ["📚 <b>Matching files across your courses</b>"]
             for oc, oi, _ in every:
-                out.append(f'• <a href="{html.escape(_item_link(oi))}">{esc(oi["name"])}</a> — '
+                out.append(f'• <a href="{html.escape(_item_link(oi))}">{esc(oi["name"])}</a> - '
                            f'{esc(short_course(oc.get("fullname")))}')
             out.append("\nName the course to see a file's contents, e.g. <i>automata midsem syllabus</i>.")
             return "\n".join(out)
@@ -850,7 +850,7 @@ async def materials_answer(text: str) -> str:
     if not hits:
         return "I couldn't find matching files in " + esc(short_course(picked[0].get("fullname"))) + "."
     c, it, score = hits[0]
-    out = [f"📚 <b>{esc(it['name'])}</b> — {esc(short_course(c.get('fullname')))}",
+    out = [f"📚 <b>{esc(it['name'])}</b> - {esc(short_course(c.get('fullname')))}",
            f'<i>{esc(it["section"])}</i> · <a href="{html.escape(_item_link(it))}">open on LMS</a>']
     readable = [f for f in it["files"] if re.search(r"\.(pdf|docx|pptx|txt)$", f["name"], re.I) and f["kb"] < 15000]
     if score > 0 and readable and re.search(r"syllabus|btlap|plan|notice|announcement", text, re.I):
@@ -911,7 +911,7 @@ FILE_RESULT_CHARS = 6000
 
 MATERIALS_TOOL = {"type": "function", "function": {
     "name": "search_course_materials",
-    "description": "Find course files on the LMS — syllabus / midterm (mid-sem) syllabus, lecture slides, "
+    "description": "Find course files on the LMS - syllabus / midterm (mid-sem) syllabus, lecture slides, "
                    "notes, tutorials and solutions, BTLAP, assessment plans. Returns matching items with "
                    "file URLs; pass a URL to moodle_read_file to read it.",
     "parameters": {"type": "object", "properties": {
@@ -954,7 +954,7 @@ def _system_prompt() -> str:
         f"Current date/time: {_now().strftime('%A %d %B %Y, %I:%M %p')} IST. "
         "Answer using the tools: Moodle LMS (courses, deadlines, assignments, quizzes, grades, forum "
         "announcements) and MyCamu ERP (attendance, timetable, exam schedule, university notices). "
-        "Never invent deadlines, marks, classes or attendance — state only what tools return, and say "
+        "Never invent deadlines, marks, classes or attendance - state only what tools return, and say "
         f"so if a tool errors or returns nothing. Attendance rule: {ENV.get('ATTENDANCE_TARGET', '75')}% minimum per subject. "
         "For timetable on a specific day call mycamu_get_timetable with start_date=YYYY-MM-DD and days_ahead=0. "
         "For a syllabus (mid-sem = midterm), slides, notes, tutorials or any course file: call "
@@ -1060,9 +1060,9 @@ async def on_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
                 await send(ctx.bot, chat_id, md_to_html(answer))
                 return
             except AIUnavailable:
-                note = "\n\n<i>(AI free limit reached or busy — quick answer instead.)</i>"
+                note = "\n\n<i>(AI free limit reached or busy - quick answer instead.)</i>"
         elif GROQ_KEY:
-            note = f"\n\n<i>(Daily AI limit of {AI_DAILY_LIMIT} reached — quick answer instead.)</i>"
+            note = f"\n\n<i>(Daily AI limit of {AI_DAILY_LIMIT} reached - quick answer instead.)</i>"
         out = await keyword_answer(text)
     except Exception as e:  # noqa: BLE001
         out = friendly_error(e)
@@ -1167,7 +1167,7 @@ async def on_exam_button(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None
         return
     rows = ctx.chat_data.pop("pending_exams", None)
     if q.data == "ex:discard" or not rows:
-        await q.answer("Discarded" if rows else "Nothing pending — forward the sheet again.")
+        await q.answer("Discarded" if rows else "Nothing pending - forward the sheet again.")
         await q.edit_message_reply_markup(None)
         return
     now = int(time.time())
@@ -1200,7 +1200,7 @@ def alerts_on() -> bool:
 
 
 def alert_hours() -> list[int]:
-    """Deadline ping thresholds (hours before), largest first — from the shared settings table."""
+    """Deadline ping thresholds (hours before), largest first - from the shared settings table."""
     hrs = {int(h) for h in store.setting("alert_hours").split(",") if h.strip().isdigit() and 0 < int(h) <= 72}
     return sorted(hrs, reverse=True)
 
@@ -1336,7 +1336,7 @@ async def deadline_alerts(ctx: ContextTypes.DEFAULT_TYPE) -> None:
             continue
         bucket = _bucket_for(m["due_at"], now, hours)
         if bucket is not None:
-            course = f" — {esc(m['course_code'])}" if m.get("course_code") else ""
+            course = f" - {esc(m['course_code'])}" if m.get("course_code") else ""
             await _ping_once(ctx, f"manual:{m['id']}:{m['due_at']}", bucket, hours,
                              _head(bucket) + f"\n\n📌 <b>{esc(m['title'])}</b>{course}\n     "
                              f"{esc(fmt_due(m['due_at']))} ({esc(rel(m['due_at']))})")
@@ -1388,7 +1388,7 @@ async def new_course_items(ctx: ContextTypes.DEFAULT_TYPE) -> None:
         new = [(cm, *items[cm]) for cm in items if cm not in seen and items[cm][0] != "forum"]
         if not new:
             continue
-        lines = [f"🆕 <b>New on LMS</b> — {esc(short_course(c.get('fullname')))}"]
+        lines = [f"🆕 <b>New on LMS</b> - {esc(short_course(c.get('fullname')))}"]
         for cm, mod, name, sec in new[:10]:
             url = f"{MOODLE_URL}/mod/{mod}/view.php?id={cm}"
             icon = {"assign": "📝", "quiz": "❓", "resource": "📄", "folder": "📁", "url": "🔗"}.get(mod, "•")
@@ -1403,7 +1403,7 @@ async def camu_health(ctx: ContextTypes.DEFAULT_TYPE) -> None:
     was = store.get("camu_bad") == "1"
     if bad and not was:
         store.put("camu_bad", "1")
-        await send(ctx.bot, OWNER_ID, "⚠️ <b>MyCamu session expired</b> — attendance and timetable won't load.\n"
+        await send(ctx.bot, OWNER_ID, "⚠️ <b>MyCamu session expired</b> - attendance and timetable won't load.\n"
                                       "Log in to MyCamu in Chrome, then run <b>~/moodle-mcp/set-camu-cookie</b> on the server.")
     elif not bad and was:
         store.put("camu_bad", "0")
@@ -1444,11 +1444,11 @@ async def on_error(update: object, ctx: ContextTypes.DEFAULT_TYPE) -> None:
 
 def main() -> None:
     if not BOT_TOKEN:
-        sys.exit("TELEGRAM_BOT_TOKEN missing in .env — run ~/moodle-mcp/set-bot-secrets")
+        sys.exit("TELEGRAM_BOT_TOKEN missing in .env - run ~/moodle-mcp/set-bot-secrets")
     if not OWNER_ID:
-        sys.exit("OWNER_CHAT_ID missing in .env — run ~/moodle-mcp/set-bot-secrets")
+        sys.exit("OWNER_CHAT_ID missing in .env - run ~/moodle-mcp/set-bot-secrets")
     if not ENV.get("MCP_SECRET"):
-        sys.exit("MCP_SECRET missing in .env — deploy the MCP server first (deploy.sh)")
+        sys.exit("MCP_SECRET missing in .env - deploy the MCP server first (deploy.sh)")
     store.ensure_owner(OWNER_ID)
 
     app = Application.builder().token(BOT_TOKEN).post_init(post_init).build()

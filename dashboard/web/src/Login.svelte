@@ -28,7 +28,7 @@
 
   async function sendLink() {
     busy = true; err = ''; msg = ''
-    try { await api('auth/send-link', { method: 'POST' }); msg = 'Sent — open the link from your Telegram chat with the bot.' }
+    try { await api('auth/send-link', { method: 'POST' }); msg = 'Sent - open the link from your Telegram chat with the bot.' }
     catch (e) { err = e.message }
     busy = false
   }

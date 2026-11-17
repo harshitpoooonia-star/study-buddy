@@ -62,13 +62,13 @@
       await api('entries', { method: 'POST', body: { title: form.title, course_code: form.course_code, due_at: due, kind: form.kind } })
       form = { title: '', course_code: '', when: '', kind: 'task' }
       adding = false
-      toast('Added — it shows in your calendar feed too')
+      toast('Added - it shows in your calendar feed too')
       load()
     } catch (e2) { toast(e2.message) }
   }
 
   async function copy() {
-    try { await navigator.clipboard.writeText(ics); toast('Feed URL copied') } catch { toast('Copy failed — long-press the URL instead') }
+    try { await navigator.clipboard.writeText(ics); toast('Feed URL copied') } catch { toast('Copy failed - long-press the URL instead') }
   }
   const gcal = $derived(ics ? `https://calendar.google.com/calendar/render?cid=${encodeURIComponent(ics.replace(/^https?:/, 'webcal:'))}` : '')
 </script>
@@ -155,7 +155,7 @@
       <a class="btn" href={ics.replace(/^https?:/, 'webcal:')}>Apple / other</a>
       <button class="btn" onclick={copy}>{@html I.copy} Copy URL</button>
     </div>
-    <p class="faint small">Keep this URL private — anyone with it can read your deadlines.</p>
+    <p class="faint small">Keep this URL private - anyone with it can read your deadlines.</p>
   {:else}
     <p class="small muted">Feed isn't configured on the server (DASH_ICS_TOKEN).</p>
   {/if}

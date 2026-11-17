@@ -60,11 +60,11 @@ def main() -> int:
     # ---------------------------------------------------------------- Telegram token
     token = env.get("TELEGRAM_BOT_TOKEN", "")
     print("\n[1/3] Telegram bot token (from @BotFather).")
-    new = ask_secret("Paste it (hidden)" + (" — or press Enter to keep the current one" if token else "") + ": ")
+    new = ask_secret("Paste it (hidden)" + (" - or press Enter to keep the current one" if token else "") + ": ")
     if new:
         token = new
     if not token:
-        print("No token given — nothing changed.")
+        print("No token given - nothing changed.")
         return 1
     try:
         me = tg(token, "getMe")
@@ -72,7 +72,7 @@ def main() -> int:
         print(f"Telegram rejected that token ({e}). Copy it again from @BotFather and re-run.")
         return 2
     username = me.get("username", "?")
-    print(f"   OK — bot is @{username}")
+    print(f"   OK - bot is @{username}")
     updates["TELEGRAM_BOT_TOKEN"] = token
 
     # ---------------------------------------------------------------- Groq key (optional)
@@ -84,16 +84,16 @@ def main() -> int:
             r = httpx.get("https://api.groq.com/openai/v1/models",
                           headers={"Authorization": f"Bearer {new}"}, timeout=30)
             if r.status_code == 401:
-                print("   Groq rejected that key — skipping it (bot will use keyword answers).")
+                print("   Groq rejected that key - skipping it (bot will use keyword answers).")
                 new = ""
             else:
-                print("   OK — Groq key works.")
+                print("   OK - Groq key works.")
         except httpx.HTTPError:
             print("   Couldn't reach Groq to check the key; saving it anyway.")
         if new:
             updates["GROQ_API_KEY"] = new
     elif not groq:
-        print("   Skipped — the bot will answer free text with keyword matching.")
+        print("   Skipped - the bot will answer free text with keyword matching.")
 
     # ---------------------------------------------------------------- pair the owner
     owner = env.get("OWNER_CHAT_ID", "")
@@ -137,7 +137,7 @@ def main() -> int:
             return 3
         updates["OWNER_CHAT_ID"] = str(found["id"])
         tg(token, "sendMessage", chat_id=found["id"],
-           text="Linked ✅ — Study Buddy will start in a few seconds.")
+           text="Linked ✅ - Study Buddy will start in a few seconds.")
 
     write_env(updates)
     print("\nSaved to .env (only readable by you).")
@@ -148,5 +148,5 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except KeyboardInterrupt:
-        print("\nCancelled — nothing changed.")
+        print("\nCancelled - nothing changed.")
         sys.exit(1)

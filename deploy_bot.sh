@@ -17,7 +17,7 @@ die()  { printf '\033[1;31m[x] %s\033[0m\n' "$*"; exit 1; }
 [[ -f "$APP_DIR/telegram_bot.py" ]] || die "telegram_bot.py not found next to deploy_bot.sh"
 [[ -f "$ENV_FILE" ]] && grep -q '^MCP_SECRET=' "$ENV_FILE" \
   || die "The MCP server isn't set up here yet. Run deploy.sh first."
-systemctl is-active --quiet moodle-mcp || echo "[!] moodle-mcp isn't running right now — the bot will report that until it is."
+systemctl is-active --quiet moodle-mcp || echo "[!] moodle-mcp isn't running right now - the bot will report that until it is."
 
 sed -i 's/\r$//' "$APP_DIR/set-bot-secrets" "$APP_DIR/requirements-bot.txt" 2>/dev/null || true
 chmod 700 "$APP_DIR/set-bot-secrets"

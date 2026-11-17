@@ -53,7 +53,7 @@
 <div class="chat" bind:this={box}>
   {#if !msgs.length}
     <div class="card hello">
-      <b>Ask about deadlines, attendance, grades — or what's inside your slides.</b>
+      <b>Ask about deadlines, attendance, grades - or what's inside your slides.</b>
       <p class="muted small">Uses the same free AI as the Telegram bot, with your LMS and the search index as tools. It only states what it finds.</p>
       <div class="ideas">{#each IDEAS as i}<button class="chip" onclick={() => send(i)}>{i}</button>{/each}</div>
     </div>

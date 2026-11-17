@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Study Buddy collector — snapshots Moodle + MyCamu into study.db.
+"""Study Buddy collector - snapshots Moodle + MyCamu into study.db.
 
 Runs as a oneshot (systemd timer `study-collect`, every 30 min) or on demand from the API's
 /sync. Talks only to the local MCP server, so it shares its 10-minute MyCamu cache and 2-second
@@ -85,7 +85,7 @@ def collect_moodle(mcp: MCP, con: sqlite3.Connection) -> str:
     now = now_ts()
     seen: dict[str, dict[str, Any]] = {}
 
-    # 1) Assignments (all current courses) — due/cut-off/max grade + assign_id for status.
+    # 1) Assignments (all current courses) - due/cut-off/max grade + assign_id for status.
     # Per current course: the all-courses call includes every past semester and gets clipped.
     courses = _courses(mcp)
     course_names = {c["id"]: c.get("fullname") for c in courses}
@@ -187,7 +187,7 @@ def collect_moodle(mcp: MCP, con: sqlite3.Connection) -> str:
     except ToolError as e:
         log(f"notifications: {e}")
 
-    # 6) Write — everything above was network; the write lock is held only for this block.
+    # 6) Write - everything above was network; the write lock is held only for this block.
     with tx(con):
         for row in seen.values():
             if row["type"] == "assign" and not row.get("status"):
@@ -305,7 +305,7 @@ def _write_attendance(con: sqlite3.Connection, md: str, rows: list[list[str]], t
     m = re.search(r"\*\*Overall: ([\d.]+)%\*\* \((\d+)/(\d+)", md)
     if m:
         meta_put(con, "attendance_overall", {"pct": float(m.group(1)), "present": int(m.group(2)), "total": int(m.group(3))})
-    sem = re.match(r"# Attendance — (.+)", md)
+    sem = re.match(r"# Attendance - (.+)", md)
     if sem:
         meta_put(con, "semester", sem.group(1).strip())
 
@@ -670,7 +670,7 @@ def run(only: set[str] | None = None) -> int:
                         break
                     if group == "mycamu" and ("expired" in err.lower() or "isn't connected" in err):
                         camu_dead = True
-                except Exception as e:  # noqa: BLE001 — never let one source kill the run
+                except Exception as e:  # noqa: BLE001 - never let one source kill the run
                     failures += 1
                     _log_sync(con, name, False, f"{type(e).__name__}: {e}"[:500], int((time.monotonic() - t0) * 1000))
                     log(f"{name}: CRASHED {type(e).__name__}: {e}")

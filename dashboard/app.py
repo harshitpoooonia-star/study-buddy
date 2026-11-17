@@ -1,4 +1,4 @@
-"""Study Buddy Dashboard — a Starlette app mounted inside the moodle-mcp HTTP server at /dash.
+"""Study Buddy Dashboard - a Starlette app mounted inside the moodle-mcp HTTP server at /dash.
 
 No second Python server: moodle_mcp.py routes /dash/... here (see SecretPathGate). Starlette ships
 with the `mcp` package, so this adds no dependencies. Every handler's SQLite work runs in the thread
@@ -54,7 +54,7 @@ GRADE_POINTS = {"O": 10, "A+": 9, "A": 8, "B+": 7, "B": 6, "C": 5, "P": 4, "F": 
 
 if len(SECRET) < 32 and not DEV:
     # Raised (not sys.exit) so the MCP server keeps running with the dashboard disabled.
-    raise RuntimeError("DASH_SECRET missing/short in .env — run deploy_dash.sh (it generates one).")
+    raise RuntimeError("DASH_SECRET missing/short in .env - run deploy_dash.sh (it generates one).")
 
 init_db()
 
@@ -189,7 +189,7 @@ def send_link(request: Request, _: dict) -> dict:
     con = db()
     try:
         if now_ts() - (meta_get(con, "last_link_sent", 0) or 0) < 60:
-            raise HTTPException(429, "A link was sent less than a minute ago — check Telegram.")
+            raise HTTPException(429, "A link was sent less than a minute ago - check Telegram.")
         meta_put(con, "last_link_sent", now_ts())
         tok = secrets.token_urlsafe(32)
         con.execute("INSERT INTO login_tokens(hash, expires_at) VALUES(?,?)",
@@ -545,7 +545,7 @@ def sync(_: Request, body: dict) -> dict:
     try:
         wait = SYNC_EVERY - (now_ts() - (meta_get(con, "last_manual_sync", 0) or 0))
         if wait > 0:
-            raise HTTPException(429, f"Synced recently — try again in {wait}s.")
+            raise HTTPException(429, f"Synced recently - try again in {wait}s.")
         meta_put(con, "last_manual_sync", now_ts())
     finally:
         con.close()
@@ -820,7 +820,7 @@ routes = [
     Route("/dash/widget/{token}.json", widget),
 ]
 if DIST.is_dir():
-    from . import v3  # noqa: E402 — needs the helpers above
+    from . import v3  # noqa: E402 - needs the helpers above
 
 routes[0:0] = v3.build(sys.modules[__name__])
 routes.append(Mount("/dash", SPAStatic(directory=DIST, html=True), name="web"))

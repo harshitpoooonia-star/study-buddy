@@ -161,7 +161,7 @@ CADDY
 CF=/etc/caddy/Caddyfile
 if ! sudo grep -q "import sites/\*.caddy" "$CF" 2>/dev/null; then
   sudo cp "$CF" "$CF.bak.$(date +%s)" 2>/dev/null || true
-  # Stock Caddyfile only has the ':80' welcome page — replace it; otherwise append.
+  # Stock Caddyfile only has the ':80' welcome page - replace it; otherwise append.
   if sudo grep -q "^:80" "$CF" 2>/dev/null && [[ "$(sudo grep -cE '^[^#[:space:]].*\{' "$CF")" -le 1 ]]; then
     echo "import sites/*.caddy" | sudo tee "$CF" >/dev/null
   else
@@ -194,7 +194,7 @@ fi
 cat <<EOF
 
 ────────────────────────────────────────────────────────────
- Your connector URL (KEEP SECRET — it is the password):
+ Your connector URL (KEEP SECRET - it is the password):
 
    $URL
 

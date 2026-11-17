@@ -67,7 +67,7 @@
   </section>
 
   {#if busiest}
-    <p class="faint small tip">Heaviest day: <b>{day(dateOf(busiest.date))}</b> — {busiest.items.length} item{busiest.items.length > 1 ? 's' : ''}. Start the earlier ones a few days ahead.</p>
+    <p class="faint small tip">Heaviest day: <b>{day(dateOf(busiest.date))}</b> - {busiest.items.length} item{busiest.items.length > 1 ? 's' : ''}. Start the earlier ones a few days ahead.</p>
   {/if}
 
   <div class="section"><h2>{picked ? dayLong(dateOf(picked.date)) : ''}</h2>{#if picked}<span class="count num">{picked.items.length}</span>{/if}<span class="grow"></span>{#if picked?.classes}<span class="faint small">{picked.classes} classes</span>{/if}</div>

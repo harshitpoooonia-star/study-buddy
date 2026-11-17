@@ -1,2 +1,0 @@
-# Not used since the dashboard moved into moodle-mcp (it only needs Starlette, which `mcp` ships).
-# Safe to delete.

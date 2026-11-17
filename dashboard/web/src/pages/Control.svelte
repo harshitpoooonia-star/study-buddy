@@ -34,7 +34,7 @@
     busy = action
     try {
       const r = await api('control/action', { method: 'POST', body: { action } })
-      toast(r.started ? `${label} started — refresh in a minute` : r.note || 'Queued')
+      toast(r.started ? `${label} started - refresh in a minute` : r.note || 'Queued')
     } catch (e) { toast(e.message) }
     busy = ''
   }
@@ -44,7 +44,7 @@
     try { await api('settings', { method: 'POST', body: { muted_courses: m } }); toast(m.includes(code) ? `${code} muted` : `${code} unmuted`) } catch (e) { toast(e.message) }
   }
   async function copy(text) {
-    try { await navigator.clipboard.writeText(text); toast('Copied') } catch { toast('Copy failed — select and copy it manually') }
+    try { await navigator.clipboard.writeText(text); toast('Copied') } catch { toast('Copy failed - select and copy it manually') }
   }
   const dot = (s) => (s.ok === false ? 'bad' : s.ok ? 'ok' : 'none')
   const up = (s) => { const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600); return d ? `${d}d ${h}h` : `${h}h ${Math.floor((s % 3600) / 60)}m` }
@@ -111,7 +111,7 @@
       <div class="row"><b class="num">{c.ai.used}/{c.ai.limit}</b><span class="muted">questions today (shared with the bot)</span></div>
       <div class="faint small">Groq free tier · {c.ai.models.join(' → ')}</div>
     {:else}
-      <div class="muted">Off — add <code>GROQ_API_KEY</code> to <code>.env</code> on the VPS (free at console.groq.com/keys) and restart moodle-mcp.</div>
+      <div class="muted">Off - add <code>GROQ_API_KEY</code> to <code>.env</code> on the VPS (free at console.groq.com/keys) and restart moodle-mcp.</div>
     {/if}
   </div>
 
@@ -129,7 +129,7 @@
   {#if health?.ics_url}
     <div class="section"><h2>Calendar feed</h2></div>
     <div class="card pad">
-      <div class="faint small">Subscribe in Google/Apple Calendar. The link is private — anyone with it can read your deadlines.</div>
+      <div class="faint small">Subscribe in Google/Apple Calendar. The link is private - anyone with it can read your deadlines.</div>
       <div class="row ics"><code class="grow ellipsis">{health.ics_url}</code><button class="iconbtn" aria-label="Copy" onclick={() => copy(health.ics_url)}>{@html I.copy}</button></div>
     </div>
   {/if}

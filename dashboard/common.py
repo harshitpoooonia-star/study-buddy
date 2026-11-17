@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS manual_entries (
 );
 CREATE TABLE IF NOT EXISTS credits (course_code TEXT PRIMARY KEY, credits REAL, expected TEXT);
 CREATE TABLE IF NOT EXISTS past_terms (term TEXT PRIMARY KEY, sgpa REAL, credits REAL);
--- Shared with the bot (it creates the same tables if it starts first — keep in sync with telegram_bot.py).
+-- Shared with the bot (it creates the same tables if it starts first - keep in sync with telegram_bot.py).
 CREATE TABLE IF NOT EXISTS settings (k TEXT PRIMARY KEY, v TEXT, updated_at INTEGER);
 CREATE TABLE IF NOT EXISTS exams (
   id INTEGER PRIMARY KEY AUTOINCREMENT, course_code TEXT, title TEXT, starts_at INTEGER, ends_at INTEGER,

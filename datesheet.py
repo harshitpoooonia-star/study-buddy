@@ -199,6 +199,6 @@ def pdf_rows(data: bytes, max_pages: int = 30) -> tuple[list[list[str]], str]:
 def parse_pdf(data: bytes, codes: dict[str, str], today: date | None = None) -> list[dict[str, Any]]:
     rows, text = pdf_rows(data)
     found = parse_rows(rows, codes, today, doc_text=text)
-    if not found and text:  # tables came out mangled — try the raw text
+    if not found and text:  # tables came out mangled - try the raw text
         found = parse_text(text, codes, today)
     return found

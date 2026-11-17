@@ -1,4 +1,4 @@
-// Study Buddy — iOS widget for the free "Scriptable" app.
+// Study Buddy - iOS widget for the free "Scriptable" app.
 // Home Screen: small / medium / large.  Lock Screen: rectangular / circular / inline.
 // Setup: paste this into a new Scriptable script, set WIDGET_URL below (or put a URL in the
 // widget's "Parameter" field to point one widget at another server).
@@ -109,7 +109,7 @@ if (fam === "accessoryRectangular") {
   t(top, c ? (d.current ? "Now · " : hm(c.start) + " · ") + short(c.subject) : "No more classes", 12, "semibold", Color.white());
   const it = d.deadlines[0];
   if (it) { t(w, it.title, 12, "regular", Color.white()); t(w, `${it.code} · ${rel(it.due_at)}`, 11, "regular", new Color("#FFFFFF", 0.7)); }
-  else t(w, "Nothing due — all clear", 12, "regular", Color.white());
+  else t(w, "Nothing due - all clear", 12, "regular", Color.white());
   Script.setWidget(w); Script.complete(); return;
 }
 

@@ -22,7 +22,7 @@ from starlette.routing import Route
 
 from . import ask as ASK
 from . import common
-from .common import APP_DIR, ATT_TARGET, DB_PATH, TZ, db, meta_get, meta_put, now_local, now_ts
+from .common import APP_DIR, DB_PATH, TZ, db, meta_get, meta_put, now_local, now_ts
 
 START = time.time()
 MARK_IN, MARK_OUT = "\x01", "\x02"
@@ -163,7 +163,7 @@ def build(A: Any) -> list[Route]:
                 sql += " ORDER BY bm25(docs_fts, 6.0, 1.0) LIMIT 30"
                 try:
                     rows = [dict(r) for r in con.execute(sql, args)]
-                except Exception:  # noqa: BLE001 — bad MATCH syntax
+                except Exception:  # noqa: BLE001 - bad MATCH syntax
                     rows = []
             if not rows:
                 like = f"%{q}%"
@@ -435,7 +435,7 @@ def build(A: Any) -> list[Route]:
                 raise HTTPException(400, "unknown action")
             wait = A.SYNC_EVERY - (now_ts() - (meta_get(con, "last_manual_sync", 0) or 0))
             if wait > 0:
-                return {"started": False, "queued": True, "note": f"Queued — the next automatic run (≤30 min) will do it. Manual syncs are limited to one per {A.SYNC_EVERY}s."}
+                return {"started": False, "queued": True, "note": f"Queued - the next automatic run (≤30 min) will do it. Manual syncs are limited to one per {A.SYNC_EVERY}s."}
             meta_put(con, "last_manual_sync", now_ts())
         finally:
             con.close()
