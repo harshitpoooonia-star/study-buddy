@@ -819,11 +819,11 @@ routes = [
     Route("/dash/ics/{token}.ics", ics),
     Route("/dash/widget/{token}.json", widget),
 ]
-if DIST.is_dir():
-    from . import v3  # noqa: E402 - needs the helpers above
+from . import v3  # noqa: E402 - needs the helpers above
 
 routes[0:0] = v3.build(sys.modules[__name__])
-routes.append(Mount("/dash", SPAStatic(directory=DIST, html=True), name="web"))
+if DIST.is_dir():
+    routes.append(Mount("/dash", SPAStatic(directory=DIST, html=True), name="web"))
 
 app = Headers(Starlette(routes=routes, exception_handlers={HTTPException: http_error}))
 
